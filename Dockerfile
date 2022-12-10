@@ -1,5 +1,5 @@
 FROM ubuntu:22.10
-
+WORKDIR /
 ARG ARCH=v7em_fpv4_sp_d16_hard_t_le_eabi
 ARG SES_VERSION=568
 ARG NCLT_MAJOR=10

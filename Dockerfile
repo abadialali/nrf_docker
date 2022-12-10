@@ -1,7 +1,7 @@
 FROM ubuntu:22.04 as base
 WORKDIR /workdir
 
-ARG ARCH1=v7em_fpv4_sp_d16_hard_t_le_eabi
+ARG ARCH_=v7em_fpv4_sp_d16_hard_t_le_eabi
 ARG arch=amd64
 ARG ZEPHYR_TOOLCHAIN_VERSION=0.15.2
 ARG WEST_VERSION=0.14.0
@@ -87,8 +87,8 @@ RUN mkdir /workdir/.cache && \
         cd /_tmp && \
         wget --no-check-certificate -qO- https://www.segger.com/downloads/embedded-studio/Setup_EmbeddedStudio_ARM_v${SES_VERSION}_linux_x64.tar.gz | tar zxvf - --wildcards */install_segger_embedded_studio && \
         printf 'yes\n' | DISPLAY=:1 $(find . -name "install_segger_embedded_studio") --copy-files-to /ses && \
-        find /ses/lib/ ! -name "*${ARCH1}.a" -type f -delete && \
-        find /ses/segger-rtl/libs/ ! -name "*${ARCH1}.a" -type f -delete && \
+        find /ses/lib/ ! -name "*${ARCH_}.a" -type f -delete && \
+        find /ses/segger-rtl/libs/ ! -name "*${ARCH_}.a" -type f -delete && \
         find /ses/llvm/bin/ ! -name 'clang-tidy' -type f -delete && \
         find /ses/bin/ -name 'segger*' -type f -delete && \
         cd - && \

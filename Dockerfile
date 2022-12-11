@@ -84,7 +84,7 @@ RUN mkdir /workdir/.cache && \
         cd .. && rm -rf tmp ; \
     else \
         echo "Skipping nRF Command Line Tools (not available for $arch)" ; \
-    fi && \
+    fi ;
     #
     # # Zephyr Toolchain
     # # Releases: https://github.com/zephyrproject-rtos/sdk-ng/releases

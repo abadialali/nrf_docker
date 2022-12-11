@@ -1,13 +1,14 @@
 FROM ubuntu:22.04 as base
 WORKDIR /workdir
 
+ARG ARCH_1=v7em_fpv4_sp_d16_hard_t_le_eabi
+ARG SES_VERSION=568
 ARG arch=amd64
 ARG ZEPHYR_TOOLCHAIN_VERSION=0.15.2
 ARG WEST_VERSION=0.14.0
 ARG NRF_UTIL_VERSION=6.1.7
 ARG NORDIC_COMMAND_LINE_TOOLS_VERSION="10-18-1/nrf-command-line-tools-10.18.1"
-ARG ARCH_1=v7em_fpv4_sp_d16_hard_t_le_eabi
-ARG SES_VERSION = 568
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 # System dependencies

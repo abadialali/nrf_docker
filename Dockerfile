@@ -116,35 +116,35 @@ RUN mkdir /workdir/.cache && \
     #
     # Install Python 3.8 for older toolchain versions
     #
-    if [ $(expr match "$ZEPHYR_TOOLCHAIN_VERSION" "0\.14\.*") -ne 0 ]; then \
-        apt-get -y install software-properties-common && \
-        add-apt-repository -y ppa:deadsnakes/ppa && \
-        apt-get -y update && \
-        apt-get -y install python3.8 python3.8-dev && \
-        python3.8 --version; \
-    fi
+    # if [ $(expr match "$ZEPHYR_TOOLCHAIN_VERSION" "0\.14\.*") -ne 0 ]; then \
+    #     apt-get -y install software-properties-common && \
+    #     add-apt-repository -y ppa:deadsnakes/ppa && \
+    #     apt-get -y update && \
+    #     apt-get -y install python3.8 python3.8-dev && \
+    #     python3.8 --version; \
+    # fi
 
 # Download sdk-nrf and west dependencies to install pip requirements
-FROM base
-ARG sdk_nrf_revision=main
-RUN \
-    west init -m https://github.com/nrfconnect/sdk-nrf --mr ${sdk_nrf_revision} && \
-    west update --narrow -o=--depth=1  \
-    # echo "Installing requirements: zephyr/scripts/requirements.txt" && \
-    # python3 -m pip install -r zephyr/scripts/requirements.txt && \
-    case $sdk_nrf_revision in \
-        "v1.4-branch") \
-            echo "Installing requirements: nrf/scripts/requirements.txt" && \
-            python3 -m pip install -r nrf/scripts/requirements.txt \
-        ;; \
-        *) \
-            # Install only the requirements needed for building firmware, not documentation
-            echo "Installing requirements: nrf/scripts/requirements-base.txt" && \
-            python3 -m pip install -r nrf/scripts/requirements-base.txt && \
-            echo "Installing requirements: nrf/scripts/requirements-build.txt" && \
-            python3 -m pip install -r nrf/scripts/requirements-build.txt \
-        ;; \
-    esac \
+# FROM base
+# ARG sdk_nrf_revision=main
+# RUN \
+#     # west init -m https://github.com/nrfconnect/sdk-nrf --mr ${sdk_nrf_revision} && \
+#     # west update --narrow -o=--depth=1  \
+#     # echo "Installing requirements: zephyr/scripts/requirements.txt" && \
+#     # python3 -m pip install -r zephyr/scripts/requirements.txt && \
+#     case $sdk_nrf_revision in \
+#         "v1.4-branch") \
+#             echo "Installing requirements: nrf/scripts/requirements.txt" && \
+#             python3 -m pip install -r nrf/scripts/requirements.txt \
+#         ;; \
+#         *) \
+#             # Install only the requirements needed for building firmware, not documentation
+#             echo "Installing requirements: nrf/scripts/requirements-base.txt" && \
+#             python3 -m pip install -r nrf/scripts/requirements-base.txt && \
+#             echo "Installing requirements: nrf/scripts/requirements-build.txt" && \
+#             python3 -m pip install -r nrf/scripts/requirements-build.txt \
+#         ;; \
+#     esac \
     # echo "Installing requirements: bootloader/mcuboot/scripts/requirements.txt" && \
     # python3 -m pip install -r bootloader/mcuboot/scripts/requirements.txt
 

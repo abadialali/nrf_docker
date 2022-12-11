@@ -72,19 +72,16 @@ RUN mkdir /workdir/.cache && \
     esac && \
     echo "NCLT_URL=${NCLT_URL}" && \
     # Releases: https://www.nordicsemi.com/Software-and-tools/Development-Tools/nRF-Command-Line-Tools/Download
-    if [ ! -z "$NCLT_URL" ]; then \
-        mkdir tmp && cd tmp && \
-        wget -qO - "${NCLT_URL}" | tar --no-same-owner -xz && \
-        # Install included JLink
-        DEBIAN_FRONTEND=noninteractive apt-get -y install ./*.deb && \
-        # Install nrf-command-line-tools
-        cp -r ./nrf-command-line-tools /opt && \
-        ln -s /opt/nrf-command-line-tools/bin/nrfjprog /usr/local/bin/nrfjprog && \
-        ln -s /opt/nrf-command-line-tools/bin/mergehex /usr/local/bin/mergehex && \
-        cd .. && rm -rf tmp ; \
-    else \
-        echo "Skipping nRF Command Line Tools (not available for $arch)" ; \
-    fi ;
+    mkdir tmp && cd tmp && \
+    wget -qO - "${NCLT_URL}" | tar --no-same-owner -xz && \
+    # Install included JLink
+    DEBIAN_FRONTEND=noninteractive apt-get -y install ./*.deb && \
+    # Install nrf-command-line-tools
+    cp -r ./nrf-command-line-tools /opt && \
+    ln -s /opt/nrf-command-line-tools/bin/nrfjprog /usr/local/bin/nrfjprog && \
+    ln -s /opt/nrf-command-line-tools/bin/mergehex /usr/local/bin/mergehex && \
+    cd .. && rm -rf tmp ; \
+
     #
     # # Zephyr Toolchain
     # # Releases: https://github.com/zephyrproject-rtos/sdk-ng/releases

@@ -1,13 +1,14 @@
 FROM ubuntu:22.04 as base
 WORKDIR /workdir
 
-ARG ARCH_=v7em_fpv4_sp_d16_hard_t_le_eabi
 ARG arch=amd64
 ARG ZEPHYR_TOOLCHAIN_VERSION=0.15.2
 ARG WEST_VERSION=0.14.0
 ARG NRF_UTIL_VERSION=6.1.7
 ARG NORDIC_COMMAND_LINE_TOOLS_VERSION="10-18-1/nrf-command-line-tools-10.18.1"
-ARG SES_VERSION = 568
+ARG ARCH_1=v7em_fpv4_sp_d16_hard_t_le_eabi
+ARG SES_VERSION=568
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 # System dependencies
@@ -87,12 +88,11 @@ RUN mkdir /workdir/.cache && \
         cd /_tmp && \
         wget --no-check-certificate -qO- https://www.segger.com/downloads/embedded-studio/Setup_EmbeddedStudio_ARM_v${SES_VERSION}_linux_x64.tar.gz | tar zxvf - --wildcards */install_segger_embedded_studio && \
         printf 'yes\n' | DISPLAY=:1 $(find . -name "install_segger_embedded_studio") --copy-files-to /ses && \
-        find /ses/lib/ ! -name "*${ARCH_}.a" -type f -delete && \
-        find /ses/segger-rtl/libs/ ! -name "*${ARCH_}.a" -type f -delete && \
+        find /ses/lib/ ! -name "*${ARCH_1}.a" -type f -delete && \
+        find /ses/segger-rtl/libs/ ! -name "*${ARCH_1}.a" -type f -delete && \
         find /ses/llvm/bin/ ! -name 'clang-tidy' -type f -delete && \
         find /ses/bin/ -name 'segger*' -type f -delete && \
-        cd - && \
-        rm -rf /_tmp ; \
+        cd - && rm -rf /_tmp ;
     else \
         echo "Skipping nRF Command Line Tools (not available for $arch)" ; \
     fi && \

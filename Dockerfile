@@ -6,8 +6,6 @@ ARG ZEPHYR_TOOLCHAIN_VERSION=0.15.2
 ARG WEST_VERSION=0.14.0
 ARG NRF_UTIL_VERSION=6.1.7
 ARG NORDIC_COMMAND_LINE_TOOLS_VERSION="10-18-1/nrf-command-line-tools-10.18.1"
-ARG ARCH_1=v7em_fpv4_sp_d16_hard_t_le_eabi
-ARG SES_VERSION=568
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -84,46 +82,37 @@ RUN mkdir /workdir/.cache && \
         ln -s /opt/nrf-command-line-tools/bin/nrfjprog /usr/local/bin/nrfjprog && \
         ln -s /opt/nrf-command-line-tools/bin/mergehex /usr/local/bin/mergehex && \
         cd .. && rm -rf tmp ; \
-
-        cd /_tmp && \
-        wget --no-check-certificate -qO- https://www.segger.com/downloads/embedded-studio/Setup_EmbeddedStudio_ARM_v${SES_VERSION}_linux_x64.tar.gz | tar zxvf - --wildcards */install_segger_embedded_studio && \
-        printf 'yes\n' | DISPLAY=:1 $(find . -name "install_segger_embedded_studio") --copy-files-to /ses && \
-        find /ses/lib/ ! -name "*${ARCH_1}.a" -type f -delete && \
-        find /ses/segger-rtl/libs/ ! -name "*${ARCH_1}.a" -type f -delete && \
-        find /ses/llvm/bin/ ! -name 'clang-tidy' -type f -delete && \
-        find /ses/bin/ -name 'segger*' -type f -delete && \
-        cd - && rm -rf /_tmp ;
     else \
         echo "Skipping nRF Command Line Tools (not available for $arch)" ; \
     fi && \
     #
-    # Zephyr Toolchain
-    # Releases: https://github.com/zephyrproject-rtos/sdk-ng/releases
-    #
-    echo "Target architecture: $arch" && \
-    echo "Zephyr Toolchain version: ${ZEPHYR_TOOLCHAIN_VERSION}" && \
-    case $arch in \
-        "amd64") \
-            ZEPHYR_TOOLCHAIN_URL="https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${ZEPHYR_TOOLCHAIN_VERSION}/zephyr-sdk-${ZEPHYR_TOOLCHAIN_VERSION}_linux-x86_64.tar.gz" \
-            ;; \
-        "arm64") \
-            ZEPHYR_TOOLCHAIN_URL="https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${ZEPHYR_TOOLCHAIN_VERSION}/zephyr-sdk-${ZEPHYR_TOOLCHAIN_VERSION}_macos-aarch64.tar.gz" \
-            ;; \
-        *) \
-            echo "Unsupported target architecture: \"$arch\"" >&2 && \
-            exit 1 ;; \
-    esac && \
-    echo "ZEPHYR_TOOLCHAIN_URL=${ZEPHYR_TOOLCHAIN_URL}" && \
-    wget -qO - "${ZEPHYR_TOOLCHAIN_URL}" | tar xz && \
-    mv /workdir/zephyr-sdk-${ZEPHYR_TOOLCHAIN_VERSION} /workdir/zephyr-sdk && cd /workdir/zephyr-sdk && \
-    case $arch in \
-        "arm64") \
-            ./setup.sh -t aarch64-zephyr-elf -c \
-            ;; \
-        *) \
-            yes | ./setup.sh \
-            ;; \
-    esac && \
+    # # Zephyr Toolchain
+    # # Releases: https://github.com/zephyrproject-rtos/sdk-ng/releases
+    # #
+    # echo "Target architecture: $arch" && \
+    # echo "Zephyr Toolchain version: ${ZEPHYR_TOOLCHAIN_VERSION}" && \
+    # case $arch in \
+    #     "amd64") \
+    #         ZEPHYR_TOOLCHAIN_URL="https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${ZEPHYR_TOOLCHAIN_VERSION}/zephyr-sdk-${ZEPHYR_TOOLCHAIN_VERSION}_linux-x86_64.tar.gz" \
+    #         ;; \
+    #     "arm64") \
+    #         ZEPHYR_TOOLCHAIN_URL="https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${ZEPHYR_TOOLCHAIN_VERSION}/zephyr-sdk-${ZEPHYR_TOOLCHAIN_VERSION}_macos-aarch64.tar.gz" \
+    #         ;; \
+    #     *) \
+    #         echo "Unsupported target architecture: \"$arch\"" >&2 && \
+    #         exit 1 ;; \
+    # esac && \
+    # echo "ZEPHYR_TOOLCHAIN_URL=${ZEPHYR_TOOLCHAIN_URL}" && \
+    # wget -qO - "${ZEPHYR_TOOLCHAIN_URL}" | tar xz && \
+    # mv /workdir/zephyr-sdk-${ZEPHYR_TOOLCHAIN_VERSION} /workdir/zephyr-sdk && cd /workdir/zephyr-sdk && \
+    # case $arch in \
+    #     "arm64") \
+    #         ./setup.sh -t aarch64-zephyr-elf -c \
+    #         ;; \
+    #     *) \
+    #         yes | ./setup.sh \
+    #         ;; \
+    # esac && \
     #
     # Install Python 3.8 for older toolchain versions
     #
@@ -140,9 +129,9 @@ FROM base
 ARG sdk_nrf_revision=main
 RUN \
     west init -m https://github.com/nrfconnect/sdk-nrf --mr ${sdk_nrf_revision} && \
-    west update --narrow -o=--depth=1 && \
-    echo "Installing requirements: zephyr/scripts/requirements.txt" && \
-    python3 -m pip install -r zephyr/scripts/requirements.txt && \
+    west update --narrow -o=--depth=1  \
+    # echo "Installing requirements: zephyr/scripts/requirements.txt" && \
+    # python3 -m pip install -r zephyr/scripts/requirements.txt && \
     case $sdk_nrf_revision in \
         "v1.4-branch") \
             echo "Installing requirements: nrf/scripts/requirements.txt" && \
@@ -155,9 +144,9 @@ RUN \
             echo "Installing requirements: nrf/scripts/requirements-build.txt" && \
             python3 -m pip install -r nrf/scripts/requirements-build.txt \
         ;; \
-    esac && \
-    echo "Installing requirements: bootloader/mcuboot/scripts/requirements.txt" && \
-    python3 -m pip install -r bootloader/mcuboot/scripts/requirements.txt
+    esac \
+    # echo "Installing requirements: bootloader/mcuboot/scripts/requirements.txt" && \
+    # python3 -m pip install -r bootloader/mcuboot/scripts/requirements.txt
 
 RUN mkdir /workdir/project
 
